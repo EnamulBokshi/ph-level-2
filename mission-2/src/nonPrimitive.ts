@@ -24,7 +24,7 @@ let journey: [string, string, number] = ["Dhaka", "Madaripur", 5];
 // Object types
 
 const user: {
-    readonly cardNumber:string // access modifier 
+  // readonly cardNumber:string // access modifier 
   firstName: string;
   middleName?: string;
   lastName: string;
