@@ -125,21 +125,21 @@ type user = {
     age: number
 }
 
-const perfectUsersList: GenericArrayDynamic<user> = [
-    {
-        name: 'enamul',
-        age: 20,
-    },
-    {
-        name: 'OneOne',
-        age: '26'
-    },
+// const perfectUsersList: GenericArrayDynamic<user> = [
+//     {
+//         name: 'enamul',
+//         age: 20,
+//     },
+//     {
+//         name: 'OneOne',
+//         age: '26'
+//     },
 
-   {
-    id: 3434,
-    phone: 3353,
-   }
-]
+//    {
+//     id: 3434,
+//     phone: 3353,
+//    }
+// ]
 // so, now it's able to identify the inconsistency 
 
 // its really cool, isn't it?
