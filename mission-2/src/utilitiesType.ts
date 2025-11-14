@@ -67,3 +67,4 @@ type ProductWithColor = Required<Product>
 // lets say we want to make type of a product where every property is optional
 
 type ProductWithALlOptionalProperty = Partial<Product>;
+
