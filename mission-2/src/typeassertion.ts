@@ -18,6 +18,8 @@ const kgToGMConverter = (input: string | number) : string | number | undefined =
 }
 
 
+
+
 const result1 = kgToGMConverter(100) as number;
 console.log(result1);
 
