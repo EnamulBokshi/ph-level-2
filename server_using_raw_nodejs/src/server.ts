@@ -1,48 +1,7 @@
 import http, {IncomingMessage, Server, ServerResponse} from "http";
 import config from "./config";
-import addRoute, { RouteHandler, routes } from "./helpers/RouteHandler";
-import sendJson from "./helpers/sendJson";
-
-
-addRoute("GET", '/', (req, res) =>{
-    // res.writeHead(200, {"content-type": "application/json"});
-    // res.end(JSON.stringify({
-    //     success: true,
-    //     message: "Welcome to Nodejs world",
-    //     path: req.url
-    // }))
-    sendJson(res, {success:true, message: "Welcome to Nodejs World!!", path: req.url}, 200);
-})
-
-// health checking route
-addRoute("GET", "/health-check", (req, res)=>{
-     res.writeHead(200, {"content-type":"application/json"});
-        res.end(JSON.stringify({
-            message: "Heath check ok",
-            path: req.url
-        }))
-})
-
-
-// User add
-
-addRoute("POST", "/api/users", (req, res)=>{
-    let body = '';
-        req.on("data", (chunk)=>{
-            body += chunk.toString();
-        })
-
-        req.on("end", ()=>{
-            try {
-                const parsedBody = JSON.parse(body);
-                console.log(parsedBody);
-                console.log('first');
-                res.end(JSON.stringify(parsedBody));
-            } catch (error:any) {
-                console.log(error?.message)
-            }
-        })
-})
+import  { RouteHandler, routes } from "./helpers/RouteHandler";
+import './routes';
 
 const server: Server = http.createServer((req:IncomingMessage, res: ServerResponse)=>{
     console.log("Server is running......");
