@@ -1,6 +1,7 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { RouteHandler, routes } from "../helpers/RouteHandler";
 import sendJson from "../helpers/sendJson";
+import { parseBody } from "../helpers/parseBody";
 
 function addRoute (method: string, path: string, handler: RouteHandler){
     if(!routes.has(method)) routes.set(method, new Map());
@@ -33,22 +34,29 @@ addRoute("GET", "/health-check", (req, res)=>{
 
 // User add
 
-addRoute("POST", "/api/users", (req, res)=>{
-    let body = '';
-        req.on("data", (chunk)=>{
-            body += chunk.toString();
-        })
+addRoute("POST", "/api/users", async (req, res)=>{
+    // let body = '';
+    //     req.on("data", (chunk)=>{
+    //         body += chunk.toString();
+    //     })
 
-        req.on("end", ()=>{
-            try {
-                const parsedBody = JSON.parse(body);
-                console.log(parsedBody);
-                console.log('first');
-                // res.end(JSON.stringify(parsedBody));
-                sendJson(res, {success:true, data:parsedBody, path: req.url}, 201);
+    //     req.on("end", ()=>{
+    //         try {
+    //             const parsedBody = JSON.parse(body);
+    //             console.log(parsedBody);
+    //             console.log('first');
+    //              res.end(JSON.stringify(parsedBody));
+    //             sendJson(res, {success:true, data:parsedBody, path: req.url}, 201);
 
-            } catch (error:any) {
-                console.log(error?.message)
-            }
-        })
+    //         } catch (error:any) {
+    //             console.log(error?.message)
+    //         }
+    //     })
+    const parsedBody = await parseBody(req);
+    try {
+        sendJson(res, {success: true, data: parsedBody, path: req.url}, 201 );
+    } catch (error) {
+        sendJson(res, {success: false,error, path: req.url}, 402);
+    }
+
 })
