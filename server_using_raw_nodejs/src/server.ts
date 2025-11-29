@@ -1,15 +1,17 @@
 import http, {IncomingMessage, Server, ServerResponse} from "http";
 import config from "./config";
 import addRoute, { RouteHandler, routes } from "./helpers/RouteHandler";
+import sendJson from "./helpers/sendJson";
 
 
 addRoute("GET", '/', (req, res) =>{
-    res.writeHead(200, {"content-type": "application/json"});
-    res.end(JSON.stringify({
-        success: true,
-        message: "Welcome to Nodejs world",
-        path: req.url
-    }))
+    // res.writeHead(200, {"content-type": "application/json"});
+    // res.end(JSON.stringify({
+    //     success: true,
+    //     message: "Welcome to Nodejs world",
+    //     path: req.url
+    // }))
+    sendJson(res, {success:true, message: "Welcome to Nodejs World!!", path: req.url}, 200);
 })
 
 // health checking route
