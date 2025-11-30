@@ -2,6 +2,7 @@ import { IncomingMessage, ServerResponse } from "http";
 import { RouteHandler, routes } from "../helpers/RouteHandler";
 import sendJson from "../helpers/sendJson";
 import { parseBody } from "../helpers/parseBody";
+import { readUsers, writeUsers } from "../helpers/fileDB";
 
 function addRoute (method: string, path: string, handler: RouteHandler){
     if(!routes.has(method)) routes.set(method, new Map());
@@ -52,11 +53,22 @@ addRoute("POST", "/api/users", async (req, res)=>{
     //             console.log(error?.message)
     //         }
     //     })
-    const parsedBody = await parseBody(req);
+    const body = await parseBody(req);
+    const users = readUsers();
+    const newUser = {
+        id: Date.now(),
+        ...body,
+    }
+    users.push(newUser);
+
     try {
-        sendJson(res, {success: true, data: parsedBody, path: req.url}, 201 );
+        console.log(`Student ${newUser.id} is saving to database`);
+        writeUsers(users);
+        console.log('Student saved successfully!!');
+        sendJson(res, {success: true, data: body, path: req.url}, 201 );
     } catch (error) {
         sendJson(res, {success: false,error, path: req.url}, 402);
     }
 
 })
+
