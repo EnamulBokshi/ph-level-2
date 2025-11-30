@@ -3,6 +3,7 @@ import { RouteHandler, routes } from "../helpers/RouteHandler";
 import sendJson from "../helpers/sendJson";
 import { parseBody } from "../helpers/parseBody";
 import { readUsers, writeUsers } from "../helpers/fileDB";
+import { write } from "fs";
 
 function addRoute (method: string, path: string, handler: RouteHandler){
     if(!routes.has(method)) routes.set(method, new Map());
@@ -72,3 +73,27 @@ addRoute("POST", "/api/users", async (req, res)=>{
 
 })
 
+
+
+addRoute("PUT", "/api/users/:id", async (req, res) => {
+    const {id} = (req as any).params;
+    const body = await parseBody(req);
+
+    const users = readUsers();
+    
+    const index = users.findIndex((user:any) => user.id == id);
+
+    if(index === -1){
+        sendJson(res,{
+        success: false,
+        message: 'User not found'
+    },404);
+    }
+    users[index] = {
+        ...users[index],
+        ...body,
+    }
+
+    writeUsers(users);
+    sendJson(res, {success: true, user: users[index], message: 'User updated successfully'},202);
+})
