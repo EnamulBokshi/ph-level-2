@@ -3,7 +3,6 @@ import { RouteHandler, routes } from "../helpers/RouteHandler";
 import sendJson from "../helpers/sendJson";
 import { parseBody } from "../helpers/parseBody";
 import { readUsers, writeUsers } from "../helpers/fileDB";
-import { write } from "fs";
 
 function addRoute (method: string, path: string, handler: RouteHandler){
     if(!routes.has(method)) routes.set(method, new Map());
@@ -96,4 +95,23 @@ addRoute("PUT", "/api/users/:id", async (req, res) => {
 
     writeUsers(users);
     sendJson(res, {success: true, user: users[index], message: 'User updated successfully'},202);
+})
+
+addRoute("DELETE", "/api/users/:id", async(req, res ) => {
+    const {id} = (req as any).params;
+
+    const users = readUsers();
+    console.log(`Delete request received for the student: ${id}`);
+    console.log(`Current users: ${users}`)
+    const newUsers = users.filter((user : any) => user.id != id );
+
+    console.log(`Filtered Users: ${newUsers}`)
+    writeUsers(newUsers);
+
+    sendJson(res, {success: true, message: 'User deleted successfully'}, 204);
+})
+
+addRoute("GET", "/api/users", async(req, res)=>{
+    const users = readUsers();
+    sendJson(res, {total: users.length, data: users, message: true}, 200)
 })
