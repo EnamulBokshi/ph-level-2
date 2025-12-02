@@ -7,7 +7,7 @@ const router = Router();
 
 router.post("/", userControllers.createUser);
 
-router.get("/",logger, auth(),userControllers.getUsers );
+router.get("/",logger, auth("admin"), userControllers.getUsers );
 
 router.delete("/:id",logger, auth(), userControllers.deleteUser);
 
