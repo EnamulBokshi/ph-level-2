@@ -3,12 +3,12 @@ import initDB,{pool} from "../../config/db";
 import { userServices } from "./users.services";
 
 // Post api controller
-const createUser = async (req: Request, res: Response, next: NextFunction) => {
+const createUser = async (req: Request, res: Response) => {
 // console.log(req);
     console.log("Body: ", req.body);
     const { name, email } = req.body;
     try {
-        const result = await userServices.createUser(name, email);
+        const result = await userServices.createUser(req.body);
         // console.log(result);
 
         res.status(201).json({

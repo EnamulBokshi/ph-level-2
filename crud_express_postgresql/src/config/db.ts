@@ -25,6 +25,7 @@ const initDB = async () => {
             name VARCHAR(100) NOT NULL,
             age INT,
             email VARCHAR(150) UNIQUE NOT NULL,
+            password TEXT NOT NULL,
             address TEXT,
             phone VARCHAR(16),
             created_at TIMESTAMP DEFAULT NOW(),

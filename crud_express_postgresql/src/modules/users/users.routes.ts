@@ -12,6 +12,7 @@ router.delete("/:id", userControllers.deleteUser);
 // Handle single user actions request
 
 router.get("/:id", userControllers.getUser);
+router.put("/:id", userControllers.updateUser);
 
 
 
