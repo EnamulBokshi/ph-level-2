@@ -9,7 +9,8 @@ const loginUser = async(req: Request, res: Response )=>{
     res.status(201).json({
         success: true,
         message: "Login successful",
-        data: result,
+        token: result?.token,
+        user: result?.user,
     });
     } catch (error: any) {
         res.status(500).json({
