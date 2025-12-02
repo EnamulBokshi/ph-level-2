@@ -5,18 +5,15 @@ import logger from "../../middlewares/logger.middleware";
 
 const router = Router();
 
-router.post("/",logger, auth(), userControllers.createUser);
+router.post("/", userControllers.createUser);
 
-router.get("/", userControllers.getUsers );
+router.get("/",logger, auth(),userControllers.getUsers );
 
-router.delete("/:id", userControllers.deleteUser);
+router.delete("/:id",logger, auth(), userControllers.deleteUser);
 
 // Handle single user actions request
 
-router.get("/:id", userControllers.getUser);
-router.put("/:id", userControllers.updateUser);
-
-
-
+router.get("/:id",logger, auth(), userControllers.getUser);
+router.put("/:id",logger, auth(), userControllers.updateUser);
 
 export const userRoutes = router;
