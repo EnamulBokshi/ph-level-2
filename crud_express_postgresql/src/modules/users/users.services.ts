@@ -11,7 +11,6 @@ const createUser = async (payload:Record<string, unknown>)=> {
                 `,
                 [name, email, hashedPass,role],
             );
-
     return result;
 }
 

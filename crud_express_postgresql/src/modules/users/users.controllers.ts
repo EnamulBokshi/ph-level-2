@@ -44,7 +44,7 @@ const getUsers = async (req: Request, res: Response) => {
 const deleteUser = async (req: Request, res: Response) => {
     const { id } = req.params;
     try {
-        const user = await userServices.getUsers();
+        const user = await userServices.deleteUser(id as string);
 
         console.log(id);
         if (user.rowCount === 0) {

@@ -19,9 +19,6 @@ app.use(express.urlencoded({ extended: true }));
 
 
 initDB();
-//Logger middleware
-
-
 
 //Health check api
 app.get("/health-check", logger,(req: Request, res: Response) => {
