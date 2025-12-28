@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Users {
+  id    Int    @id @default(autoincrement())
+  name  String
+  email String @unique
+  posts Posts[] 
+  profile Profile? // one to one relationship with Profile. A User could have only one profile 
+  role ROLE @default(User)
+}
+
+model Profile{
+  id Int @id @default(autoincrement())
+  bio String?
+  dateOfBirth DateTime?
+  userId Int @unique
+  user Users @relation(fields: [userId], references: [id])
+}
+model Posts {
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String?
+  isPublished Boolean  @default(false)
+
+  // Relation with User table / model -> 1 to many (one user might have multiple posts)
+  authorId Int
+  author Users @relation(fields: [authorId], references: [id])
+
+  createAt    DateTime @default(now())
+  updateAt    DateTime @updatedAt
+
+
+}
+enum ROLE{
+  User
+  Admin
+}
