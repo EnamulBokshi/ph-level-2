@@ -29,6 +29,7 @@
     "better-auth": "^1.4.9",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "studio": "^0.13.5"
   }
 }
