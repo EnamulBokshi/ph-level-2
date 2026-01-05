@@ -73,6 +73,11 @@ const getAllPosts = async ({ search, tags, isFeatured,status,authorId, page, lim
         },
         orderBy: {
             [sortBy]: orderBy
+        },
+        include: {
+            _count: {
+                select: {comments: true}
+            }
         }
     });
 

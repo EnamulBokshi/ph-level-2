@@ -13,7 +13,7 @@ async function main() {
     } catch (error) {
         console.error('An error occured: ', error)
         await prisma.$disconnect();
-        process.exit();
+        process.exit(1);
     }
 }
 
