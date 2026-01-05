@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { postService } from "./post.service";
-import { success } from "better-auth/*";
 import { PostStatus } from "../../../generated/prisma/enums";
 import paginationSortHelper from "../../helpers/paginationSort.helper";
 
