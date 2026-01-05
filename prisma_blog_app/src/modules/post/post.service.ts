@@ -13,7 +13,8 @@ const createPost = async (data: Omit<Post, "id" | "createdAt" | "updatedAt">) =>
 }
 
 
-const getAllPosts = async ({ search, tags, isFeatured,status,authorId}: { search?: string | undefined, tags: string[] | [], isFeatured: boolean | undefined, status: PostStatus | undefined, authorId:string}) => {
+const getAllPosts = async ({ search, tags, isFeatured,status,authorId, page, limit, skip, sortBy, orderBy}: 
+    { search?: string | undefined, tags: string[] | [], isFeatured: boolean | undefined, status: PostStatus | undefined, authorId:string, page:number, limit: number, skip: number, sortBy: string, orderBy: string }) => {
     const partials: PostWhereInput[] = [];
     if (search) {
         partials.push({
@@ -64,11 +65,35 @@ const getAllPosts = async ({ search, tags, isFeatured,status,authorId}: { search
             authorId
         })
     }
-    return await prisma.post.findMany({
+    const allPosts = await prisma.post.findMany({
+        take: limit,
+        skip,
         where: {
             AND: partials,
+        },
+        orderBy: {
+            [sortBy]: orderBy
         }
     });
+
+    // meta data
+
+    const total = await prisma.post.count({
+        where: {
+            AND: partials
+        } 
+    })
+
+    return {
+        data: allPosts,
+        pagination: {
+            page,
+            limit,
+            total,
+            totalPage: Math.ceil((total/limit))
+        }
+
+    }
 }
 
 /*
@@ -81,7 +106,29 @@ const getAllPosts = async ({ search, tags, isFeatured,status,authorId}: { search
     and that's it
  */
 
+const getPostById = async(postId: string) => {
+    return await prisma.$transaction(async(tx)=> {
+        await tx.post.update({
+            where:{
+                id: postId
+            },
+            data:{
+                views: {
+                    increment: 1
+                }
+            }
+        });
+        const postData = await tx.post.findUnique({
+            where: {
+                id: postId
+            }
+        })
+        return postData;
+    });
+}
+
 export const postService = {
     createPost,
     getAllPosts,
+    getPostById
 }

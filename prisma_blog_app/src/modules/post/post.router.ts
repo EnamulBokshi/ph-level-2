@@ -4,9 +4,8 @@ import authMiddleware, { UserRole } from "../../middleware/auth.middleware";
 
 const router = Router();
 
-
 router.post('/',authMiddleware(UserRole.ADMIN, UserRole.USER), postController.createPost);
 router.get('/', postController.getAllPosts);
-
+router.get('/:postId', postController.getPostById);
 
 export const postRouter:Router = router;
