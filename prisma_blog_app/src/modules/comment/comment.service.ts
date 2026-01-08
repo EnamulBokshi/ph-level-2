@@ -1,3 +1,4 @@
+import { CommentStatus } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 
 const createComment = async(payload: {
@@ -48,7 +49,90 @@ const getCommentById = async(commentId: string)=>{
     })
 }
 
+const getCommentsByAuthor = async(authorId:string)=> {
+    return await prisma.comment.findMany({
+        where: {
+            authorId,
+        },
+        orderBy: {createdAt: "desc"}
+        ,
+        include: {
+            post: {
+                select: {
+                    id: true,
+                    title: true,
+
+                }
+            }
+        }
+    })
+}
+
+const deleteComment = async(commentId: string, authorId: string) => {
+    console.log({commentId, authorId})
+    const commentData = await prisma.comment.findFirst({
+        where: {
+            id: commentId,
+            authorId
+        },
+
+        select: {
+            id: true
+        }
+    })
+    if(!commentData){
+        throw Error('Invalid credentials!!');
+
+    }
+
+    return await prisma.comment.delete({
+        where: {
+            id: commentData.id
+        }
+    })
+}
+const updateComment = async(commentId: string, authorId: string, data: {content?: string, status?: CommentStatus}) => {
+    console.log({commentId, authorId})
+    const commentData = await prisma.comment.findFirst({
+        where: {
+            id: commentId,
+            authorId
+        },
+
+        select: {
+            id: true
+        }
+    })
+    if(!commentData){
+        throw Error('Invalid credentials!!');
+
+    }
+
+    return await prisma.comment.update({
+        where: {
+            id: commentData.id,
+            authorId,
+        },
+        data: data
+    })
+}
+const moderateComment = async(commentId: string, data:{status: CommentStatus})=> {
+    const comment = await prisma.comment.findUniqueOrThrow({where: {id: commentId}});
+    if(comment.status === data.status){
+        throw Error(`There is nothing to update!!. The status is already set as ${data.status}`)
+    }
+   return await prisma.comment.update({
+    where:{
+        id: commentId
+    },
+    data,
+   })
+}
 export const commentService = {
     createComment,
-    getCommentById
+    getCommentById,
+    getCommentsByAuthor,
+    deleteComment,
+    updateComment,
+    moderateComment
 }

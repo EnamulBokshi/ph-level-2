@@ -164,8 +164,35 @@ const getPostById = async(postId: string) => {
     });
 }
 
+const myPosts = async(authorId: string) =>{
+    return await prisma.post.findMany({
+        where: {authorId},
+        orderBy: {createdAt: "desc"}
+    })
+}
+
+const updatePost = async(postId:string, data:Partial<Post>, authorId:string, isAdmin:boolean) => {
+    const post = await prisma.post.findUniqueOrThrow({where:{id: postId,authorId}, select:{id:true}});
+    if(!post.id && !isAdmin) {
+        throw new Error('No posts exists against given credentials')
+    };
+
+    if(!isAdmin){
+        delete data.isFeatured;
+    }
+    
+    return await prisma.post.update({
+        where: {
+            id: postId
+        },
+        data,
+    })
+}
+
 export const postService = {
     createPost,
     getAllPosts,
-    getPostById
+    getPostById,
+    myPosts,
+    updatePost
 }

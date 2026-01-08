@@ -41,7 +41,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     autoSignIn: false,
-    requireEmailVerification: true
+    requireEmailVerification: false  // Changed to false for easier testing
   },
   emailVerification: {
     sendOnSignUp: true, // mail will be sent only on signup not while loging
