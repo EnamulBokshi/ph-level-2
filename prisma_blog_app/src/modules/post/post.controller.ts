@@ -3,6 +3,7 @@ import { postService } from "./post.service";
 import { PostStatus } from "../../../generated/prisma/enums";
 import paginationSortHelper from "../../helpers/paginationSort.helper";
 import { UserRole } from "../../middleware/auth.middleware";
+import { success } from "better-auth/*";
 
 const createPost = async (req: Request, res: Response) => {
     try {
@@ -117,10 +118,57 @@ const updatePost = async(req: Request, res:Response) =>{
         })
     }
 }
+
+const deletePost = async(req: Request, res:Response) =>{
+    try {
+        const postId = req.params.postId;
+        const authorId = req.user?.id;
+        if(!postId || !authorId) {
+            throw new Error('Post id or author is messing!!');
+        }
+        const isAdmin: boolean = req.user?.role === UserRole.ADMIN;
+        const result = await postService.deletePost(postId,  authorId, isAdmin);
+        res.status(202).json(result);
+        
+    } catch (error) {
+         console.log(error)
+        const errorMessage =(error instanceof Error)? error.message : "Post delete failed"
+        res.status(400).json({
+            success: false,
+            message: errorMessage
+        })
+    }
+}
+const postStats = async(req: Request, res: Response)=> {
+    try {
+        if(!req.user) {
+            throw new Error('Post id or author is messing!!');
+        }
+        const isAdmin: boolean = req.user?.role === UserRole.ADMIN;
+        if(!isAdmin) {
+            throw new Error('You are not authorized to access this resources');
+
+        }
+        const data = await postService.postStats();
+        res.status(200).json({
+            success: true,
+            data
+        })
+    } catch (error) {
+        console.log(error)
+        const errorMessage =(error instanceof Error)? error.message : "Post delete failed"
+        res.status(400).json({
+            success: false,
+            message: errorMessage
+        })
+    }
+}
 export const postController = {
     createPost,
     getAllPosts,
     getPostById,
     myPosts,
-    updatePost
+    updatePost,
+    deletePost,
+    postStats
 }
