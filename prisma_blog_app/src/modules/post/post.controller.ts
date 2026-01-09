@@ -1,24 +1,21 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { postService } from "./post.service";
 import { PostStatus } from "../../../generated/prisma/enums";
 import paginationSortHelper from "../../helpers/paginationSort.helper";
 import { UserRole } from "../../middleware/auth.middleware";
 import { success } from "better-auth/*";
 
-const createPost = async (req: Request, res: Response) => {
+const createPost = async (req: Request, res: Response, next: NextFunction) => {
     try {
         console.log(req.user);
         const result = await postService.createPost({ ...req.body, authorId: req.user?.id });
         res.status(201).json(result)
     } catch (error) {
-        res.status(400).json({
-            error: "Post creation failed",
-            details: error
-        })
+        next(error);
     }
 }
 
-const getAllPosts = async (req: Request, res: Response) => {
+const getAllPosts = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { search } = req.query || "";
         const searchValue = typeof search === 'string' ? search : undefined;
@@ -51,15 +48,11 @@ const getAllPosts = async (req: Request, res: Response) => {
 
         res.status(200).json(result)
     } catch (error) {
-        console.error(error)
-        res.status(400).json({
-            success: false,
-            message: 'Somthing went wrong!!!'
-        })
+        next(error)
     }
 }
 
-const getPostById = async (req: Request, res: Response) => {
+const getPostById = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { postId } = req.params;
         if (!postId) {
@@ -70,15 +63,12 @@ const getPostById = async (req: Request, res: Response) => {
         res.status(201).json(result)
 
     } catch (error) {
-        res.status(400).json({
-            error: "Post retrival failed!!",
-            details: error
-        })
+       next(error)
     }
 
 }
 
-const myPosts = async (req: Request, res: Response) => {
+const myPosts = async (req: Request, res: Response, next:NextFunction) => {
     try {
         if(!req.user){
             throw new Error("You are not authorized!!");
@@ -88,17 +78,12 @@ const myPosts = async (req: Request, res: Response) => {
         res.status(200).json(result)
 
     } catch (error) {
-        console.log(error)
-        const errorMessage =(error instanceof Error)? error.message : "Post retrival failed"
-        res.status(400).json({
-            success: false,
-            message: errorMessage
-        })
+        next(error)
     }
 
 }
 
-const updatePost = async(req: Request, res:Response) =>{
+const updatePost = async(req: Request, res:Response, next: NextFunction) =>{
     try {
         const postId = req.params.postId;
         const authorId = req.user?.id;
@@ -110,16 +95,11 @@ const updatePost = async(req: Request, res:Response) =>{
         res.status(202).json(result);
         
     } catch (error) {
-         console.log(error)
-        const errorMessage =(error instanceof Error)? error.message : "Post retrival failed"
-        res.status(400).json({
-            success: false,
-            message: errorMessage
-        })
+         next(error)
     }
 }
 
-const deletePost = async(req: Request, res:Response) =>{
+const deletePost = async(req: Request, res:Response, next: NextFunction) =>{
     try {
         const postId = req.params.postId;
         const authorId = req.user?.id;
@@ -132,14 +112,10 @@ const deletePost = async(req: Request, res:Response) =>{
         
     } catch (error) {
          console.log(error)
-        const errorMessage =(error instanceof Error)? error.message : "Post delete failed"
-        res.status(400).json({
-            success: false,
-            message: errorMessage
-        })
+        next(error)
     }
 }
-const postStats = async(req: Request, res: Response)=> {
+const postStats = async(req: Request, res: Response, next: NextFunction)=> {
     try {
         if(!req.user) {
             throw new Error('Post id or author is messing!!');
@@ -155,12 +131,7 @@ const postStats = async(req: Request, res: Response)=> {
             data
         })
     } catch (error) {
-        console.log(error)
-        const errorMessage =(error instanceof Error)? error.message : "Post delete failed"
-        res.status(400).json({
-            success: false,
-            message: errorMessage
-        })
+        next(error)
     }
 }
 export const postController = {
