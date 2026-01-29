@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express"
 import { auth } from "../lib/auth"
-import { success } from "better-auth/*";
 
 declare global{
     namespace Express{
